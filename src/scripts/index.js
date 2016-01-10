@@ -3,8 +3,10 @@
 
   const EventEmitter = require('events');
   const co = require('co');
+  const remote = require('remote');
   const clipboard = require('electron').clipboard;
   const _ = require('./src/scripts/modules/custom-lodash');
+  const alertify = require('alertify.js');
   const util = require('./src/scripts/modules/util');
   const flow = require('./src/scripts/modules/flow');
   const storage = require('./src/scripts/modules/storage');
@@ -12,6 +14,8 @@
   const Folder = require('./src/scripts/modules/folder');
   const Color = require('./src/scripts/modules/color');
   const Markup = require('./src/scripts/modules/markup');
+
+  const currentWindow = remote.getCurrentWindow();
 
   const ev = {
     changeFolderHandler: (() => {
@@ -33,6 +37,7 @@
     })(),
     clickHexHandler(self, e) {
       clipboard.writeText(self.innerText);
+      alertify.log('Copied!')
     },
   };
 
@@ -60,58 +65,79 @@
 
   console.log(storage);
 
-  storage.get.then(() => {
-    console.log(storage.data);
-  });
+  // const cache = {
+  //   get folder() {
+  //
+  //   }
+  // };
 
-  co(function* () {
+  const template = require('./src/scripts/modules/template');
+  const folders = new Markup('folders', template.folders);
+  const colors = new Markup('colors', template.colors);
+
+  alertify.logPosition('right top');
+
+  storage.get.then(() => {
     const folderAddBtn = document.getElementById('folderAddBtn');
-    folderAddBtn.addEventListener('click', Folder.addNew());
-    flow.emit('inited');
+    folderAddBtn.addEventListener('click', () => {
+      flow.emit('folder:add');
+    }, false);
+    flow.emit('folder:init');
   }).catch(err => {
     console.error(err);
   });
 
-  flow.on('inited', () => {
-    co(function* () {
-      const template =
-        yield util.readFile('./src/scripts/templates/folders.html');
-      const folderElem = new Markup('folders', template);
-      folderElem.render(rootFolder.folders);
-
-      const btns = folderElem.find('.folder__btn');
-      btns.forEach(btn => {
-        const handler = ev.changeFolderHandler.bind(null, btn, btns);
-        btn.addEventListener('click', handler, false);
-      });
-    }).catch(err => {
-      console.error(err);
+  flow.on('folder:init', () => {
+    folders.render(rootFolder.folders);
+    const btns = folders.find('.folder__btn');
+    btns.forEach(btn => {
+      const handler = ev.changeFolderHandler.bind(null, btn, btns);
+      btn.addEventListener('click', handler, false);
     });
   });
 
   flow.on('changed:folder', (foldername, e) => {
-    co(function *() {
-      const template =
-        yield util.readFile('./src/scripts/templates/colors.html');
-      const colorElem = new Markup('colors', template);
-      const folder = rootFolder.get(foldername);
-      const colors = _.groupBy(folder.get, color => {
+    const folder = rootFolder.get(foldername);
+    const data = (() => {
+      const grouped = _.groupBy(folder.get, color => {
         return color.isLight ? 'light' : 'dark';
       });
-      colorElem.render(colors);
+      grouped.light = grouped.light || [];
+      grouped.dark = grouped.dark || [];
+      return grouped;
+    })();
+    colors.render(data);
 
-      const starBtns = colorElem.find('.color__star-btn');
-      starBtns.forEach(btn => {
-        const handler = ev.clickStarHandler.bind(null, btn);
-        btn.addEventListener('click', handler, false);
-      });
-
-      const valueBtns = colorElem.find('.color__value');
-      valueBtns.forEach(btn => {
-        const handler = ev.clickHexHandler.bind(null, btn);
-        btn.addEventListener('click', handler, false);
-      });
+    const starBtns = colors.find('.color__star-btn');
+    starBtns.forEach(btn => {
+      const handler = ev.clickStarHandler.bind(null, btn);
+      btn.addEventListener('click', handler, false);
     });
+
+    const valueBtns = colors.find('.color__value');
+    valueBtns.forEach(btn => {
+      const handler = ev.clickHexHandler.bind(null, btn);
+      btn.addEventListener('click', handler, false);
+    });
+  });
+
+  flow.on('folder:add', () => {
+    const target = new Folder(Folder.defaultName, true);
+    rootFolder.add(target);
+    folders.render(rootFolder.folders);
+    const elem = document.getElementById('folderEditMode');
+    elem.innerText = '';
+    elem.focus();
+    elem.addEventListener('blur', (e) => {
+      console.log(elem);
+      elem.innerText = elem.innerText || Folder.defaultName;
+      elem.removeAttribute('contenteditable');
+      elem.removeAttribute('id');
+      target.rename(elem.innerText);
+      target.editMode = false;
+      console.log(rootFolder.folders);
+    flow.emit('folder:init');
+    }, false);
   });
 
 })();

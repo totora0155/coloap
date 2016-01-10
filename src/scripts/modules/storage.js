@@ -2,6 +2,7 @@
 
 const remote = require('remote');
 const app = remote.require('app');
+// const electron = require('electron');
 const co = require('co');
 const fs = require('fs');
 const path = require('path');

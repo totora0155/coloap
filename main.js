@@ -8,18 +8,14 @@ const BrowserWindow = electron.BrowserWindow;
 const fs = require('fs');
 const path = require('path');
 // console.log(process.cwd());
-// const storage = require('./src/scripts/modules/storage');
-// const util = require('./util');
-// const co = require('co');
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-// const initialData = {
-//   folder: {},
-//   color: [],
-// };
+const initialData = {
+  folder: {},
+  color: [],
+};
 
 function createWindow () {
   // co(function* () {

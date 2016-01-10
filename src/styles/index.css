@@ -35,6 +35,12 @@ body {
   font: 15px/1.7 "游ゴシック体, "Yu Gothic", YuGothic, "ヒラギノ角ゴシック Pro", "Hiragino Kaku Gothic Pro", メイリオ, Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif";
 }
 
+.alertify-logs .default {
+  background: #fae03c;
+  color: hsla(0, 0%, 0%, .7);
+  font-family: "reaf";
+}
+
 .octicon {
   margin-right: .5rem;
 }
@@ -63,10 +69,10 @@ body {
   content: attr(data-title);
   position: absolute;
   top: -3px;
-  width: 6em;
+  width: 5em;
   padding: .25rem;
-  font-weight: bold;
   font-size: .75em;
+  font-family: "reaf";
   background: #fae03c;
   color: hsla(0, 0%, 0%, .7);
   transition: .15s linear;
@@ -79,11 +85,6 @@ body {
   transform: translate3d(10%, 0, 0) scale(1);
   opacity: 1;
   z-index: 1;
-}
-
-.ctrl__plus_btn:after:hover {
-  opacity: 0;
-  z-index: -1;
 }
 
 .folder__box {
@@ -120,6 +121,16 @@ body {
 .folder__btn-active {
   background: #313131;
   color: #f3f3f3;
+}
+
+.folder__name {
+  display: inline-block;
+  min-width: 6rem;
+}
+
+.folder__name:focus {
+  outline: 2px solid #fae03c;
+  outline-offset: 4px;
 }
 
 .display__box {
