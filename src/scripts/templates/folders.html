@@ -1,0 +1,8 @@
+<% _.forEach(data, function(folder) { %>
+  <li class="folder__item">
+    <a class="folder__btn" role="button" data-name="<%= folder.name %>">
+      <span class="octicon octicon-file-directory"></span>
+      <span><%= folder.name %></span>
+    </a>
+  </li>
+<% }) %>

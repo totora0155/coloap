@@ -1,0 +1,6 @@
+{
+  "name": "coloap",
+  "dependencies": {
+    "octicons": "*"
+  }
+}

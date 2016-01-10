@@ -1,0 +1,43 @@
+<% if (data.light.length > 0) { %>
+  <section class="display__group display__light-section">
+    <h2 class="display__groupname">Light</h2>
+    <ul class="display__list">
+      <% _.forEach(data.light, function(color) { %>
+        <li class="display__item">
+          <dl class="color__box">
+            <dt role="button" class="color__value"><%= color.hex %>
+            <dd class="color__sample" style="
+              background-color: #<%= color.hex %>;
+              border-radius: <%= random.get41to50 %>% <%= random.get41to50 %>% <%= random.get41to50 %>% <%= random.get41to50 %>% / <%= random.get41to50 %>% <%= random.get41to50 %>% <%= random.get41to50 %>% <%= random.get41to50 %>%;
+              transform: rotate(<%= random.get360 %>deg);
+            "></dd>
+            <span role="button" class="color__star-btn octicon octicon-star"></span>
+          </dl>
+          <div class="display__name"><%= color.name %></div>
+        </li>
+      <% }); %>
+    </ul>
+  </section>
+<% } %>
+
+<% if (data.dark.length > 0) { %>
+  <section class="display__group display__dark-section">
+    <h2 class="display__groupname">Dark</h2>
+    <ul class="display__list">
+      <% _.forEach(data.dark, function(color) { %>
+        <li class="display__item">
+          <dl class="color__box">
+            <dt role="button" class="color__value"><%= color.hex %>
+            <dd class="color__sample" style="
+              background-color: #<%= color.hex %>;
+              border-radius: <%= random.get41to50 %>% <%= random.get41to50 %>% <%= random.get41to50 %>% <%= random.get41to50 %>% / <%= random.get41to50 %>% <%= random.get41to50 %>% <%= random.get41to50 %>% <%= random.get41to50 %>%;
+              transform: rotate(<%= random.get360 %>deg);
+            "></dd>
+            <span role="button" class="color__star-btn octicon octicon-star"></span>
+          </dl>
+          <div class="display__name"><%= color.name %></div>
+        </li>
+      <% }); %>
+    </ul>
+  </section>
+<% } %>

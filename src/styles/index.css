@@ -1,0 +1,254 @@
+@charset "utf-8";
+
+@font-face {
+    font-family: "reaf";
+    src: url("webfonts/Reef.woff") format("woff");
+}
+
+[role=button] {
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html {
+  background: #313131;
+}
+
+::selection {
+  background: hsla(0, 0%, 100%, .3);
+  outline: 1px solid orange;
+}
+
+body {
+  margin: 0;
+}
+
+.wrapper {
+  position: absolute;
+  top: 0;
+  display: flex;
+  min-width: 100vw;
+  min-height: 100vh;
+  background: #313131;
+  color: #f3f3f3;
+  font: 15px/1.7 "游ゴシック体, "Yu Gothic", YuGothic, "ヒラギノ角ゴシック Pro", "Hiragino Kaku Gothic Pro", メイリオ, Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif";
+}
+
+.octicon {
+  margin-right: .5rem;
+}
+
+.ctrl__box {
+  padding: .5rem 1rem;
+}
+
+.ctrl__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.ctrl__item {
+  display: inline-block;
+}
+
+.ctrl__plus-btn {
+  position: relative;
+  height: 1em;
+}
+
+.ctrl__plus-btn:after {
+  content: attr(data-title);
+  position: absolute;
+  top: -3px;
+  width: 6em;
+  padding: .25rem;
+  font-weight: bold;
+  font-size: .75em;
+  background: #fae03c;
+  color: hsla(0, 0%, 0%, .7);
+  transition: .15s linear;
+  transform: translate3d(0, 0, 0) scale(.95);
+  opacity: 0;
+  z-index: -1;
+}
+
+.ctrl__plus-btn:hover:after {
+  transform: translate3d(10%, 0, 0) scale(1);
+  opacity: 1;
+  z-index: 1;
+}
+
+.ctrl__plus_btn:after:hover {
+  opacity: 0;
+  z-index: -1;
+}
+
+.folder__box {
+  flex: 0 0 10rem;
+  background: hsla(0, 0%, 100%, .1);
+}
+
+.folder__fixed {
+  position: fixed;
+  width: 10rem;
+}
+
+.folder__list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.folder__btn {
+  display: block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  padding: .5rem 1rem;
+  font-size: .85em;
+  transition: .15s linear;
+  color: hsla(0, 0%, 100%, .5);
+}
+
+.folder__btn:hover {
+  color: #f3f3f3;
+}
+
+.folder__btn-active {
+  background: #313131;
+  color: #f3f3f3;
+}
+
+.display__box {
+  flex: 1 1 auto;
+}
+
+.display__group {
+  padding: 2.3em 0;
+}
+
+.display__dark-section {
+  background: #f3f3f3;
+}
+
+.display__list {
+  overflow: hidden;
+  list-style: none;
+  margin-bottom: 0;
+}
+
+.display__item {
+  position: relative;
+  float: left;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem 1rem 3rem;
+}
+
+.display__groupname {
+  margin-top: 0;
+  font-family: "reaf";
+  text-align: center;
+  font-size: 2.3em;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.display__dark-section .display__groupname {
+  color: #313131;
+}
+
+.display__name {
+  position: absolute;
+  bottom: 1rem;
+  right: 50%;
+  transform: translateX(50%);
+  border-bottom: 1px solid hsla(0, 0%, 100%, .1);
+  text-align: center;
+  font-size: .85em;
+  color: hsla(0, 0%, 100%, .5);
+}
+
+.display__dark-section .display__name {
+  color: hsla(0, 0%, 0%, .5);
+  border-bottom: 1px solid hsla(0, 0%, 0%, .1);
+}
+
+.color__box {
+  position: relative;
+  width: 13vmax;
+  margin: 0 auto;
+}
+
+.color__value {
+  position: absolute;
+  z-index: 1;
+  bottom: 1rem;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.3em;
+  color: hsla(0, 0%, 0%, .6);
+  font-family: "reaf";
+}
+
+.color__sample {
+  width: 13vmax;
+  height: 13vmax;
+  margin: 0 auto;
+  box-shadow: inset 0 0 0 .2rem hsla(0, 0%, 0%, .3);
+}
+
+.color__star-btn {
+  position: absolute;
+  right: -1rem;
+  top: -1rem;
+  font-size: 1.3em;
+  color: hsla(0, 0%, 100%, .5);
+}
+
+.color__star-btn--active {
+  color: #fae03c;
+}
+
+.display__dark-section .color__star-btn {
+  color: hsla(0, 0%, 0%, .5);
+}
+
+.display__dark-section .color__star-btn--active {
+  color: #fab13c;
+}
+
+
+
+@media all and (min-width: 550px) {
+  .display__item {
+    width: 50%;
+  }
+}
+
+@media all and (min-width: 800px) {
+  .display__item {
+    width: 25%;
+  }
+}
+
+@media all and (min-width: 1200px) {
+  .display__item {
+    width: 14.285%;
+  }
+
+  .color__box {
+    width: 8vmax;
+  }
+
+  .color__sample {
+    width: 8vmax;
+    height: 8vmax;
+    margin: 0 auto;
+    box-shadow: inset 0 0 0 .2rem hsla(0, 0%, 0%, .3);
+  }
+}
