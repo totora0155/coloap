@@ -1,27 +1,24 @@
 {
   "name": "coloap",
-  "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "version": "0.0.1",
+  "description": "",
   "main": "main.js",
   "scripts": {
     "start": "electron main.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atom/electron-quick-start.git"
+    "url": "git+https://github.com/totora0155/coloap.git"
   },
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial"
+    "color"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "nju33",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/atom/electron-quick-start/issues"
+    "url": "https://github.com/totora0155/coloap/issues"
   },
-  "homepage": "https://github.com/atom/electron-quick-start#readme",
+  "homepage": "https://github.com/totora0155/coloap#readme",
   "devDependencies": {
     "electron-prebuilt": "^0.36.0"
   },
