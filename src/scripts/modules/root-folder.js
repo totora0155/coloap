@@ -7,7 +7,15 @@ class RootFolder {
     this.folders = [];
   }
 
-  get (name) {
+  get get() {
+    let data = {};
+    this.folders.forEach(folder => {
+      data[folder.name] = _.map(folder.get, color => color.get);
+    });
+    return data;
+  }
+
+  getFolder (name) {
     return _.find(this.folders, {name});
   }
 

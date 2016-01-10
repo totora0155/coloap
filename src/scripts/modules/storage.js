@@ -22,16 +22,20 @@ class Storage {
   constructor() {
     this.data = null;
     this.dataDir = path.join(app.getPath('home'), `.${pkg.name}`);
+    this.dataFile = path.join(this.dataDir, file.data);
   }
 
   get get() {
     const self = this;
     return co(function* () {
-      const filepath = path.join(self.dataDir, file.data);
-      const content = yield util.readFile(filepath);
+      const content = yield util.readFile(self.dataFile);
       self.data = JSON.parse(content);
-      flow.emit('readed:data', self.data);
+      return self.data;
     });
+  }
+
+  save(data) {
+    fs.writeFileSync(this.dataFile, data, enc);
   }
 }
 

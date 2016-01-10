@@ -6,6 +6,7 @@ const _ = {
   template: require('lodash.template'),
   templateSettings: require('lodash.templatesettings'),
   forEach: require('lodash.foreach'),
+  map: require('lodash.map'),
   find: require('lodash.find'),
   merge: require('lodash.merge'),
   groupBy: require('lodash.groupby'),

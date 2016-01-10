@@ -17,29 +17,6 @@
 
   const currentWindow = remote.getCurrentWindow();
 
-
-    const t1 = new Color('foo', '#bc002d');
-    const t2 = new Color('foo', '#4c9e72');
-    const t3 = new Color('foo', '#4285f4');
-    const t4 = new Color('foo', '#f15723');
-    const t5 = new Color('foo', '#73abd3');
-    const t6 = new Color('foo', '#f5da55');
-
-    const foo = new Folder('foo');
-    const bar = new Folder('bar');
-    const baz = new Folder('baz');
-
-    foo.add(t1);
-    foo.add(t2);
-    foo.add(t3);
-    foo.add(t4);
-    foo.add(t5);
-    foo.add(t6);
-
-    rootFolder.add(foo);
-    rootFolder.add(bar);
-    rootFolder.add(baz);
-
   const ev = {
     changeFolderHandler: (() => {
       const className = 'folder__btn-active';
@@ -66,22 +43,23 @@
     },
   };
 
-
-  console.log(storage);
-
-  // const cache = {
-  //   get folder() {
-  //
-  //   }
-  // };
-
   const template = require('./src/scripts/modules/template');
   const folders = new Markup('folders', template.folders);
   const colors = new Markup('colors', template.colors);
 
   alertify.logPosition('right top');
 
-  storage.get.then(() => {
+  storage.get.then((data) => {
+    Object.keys(data).forEach(foldername => {
+      const folder = new Folder(foldername);
+      rootFolder.add(folder);
+      data[foldername].forEach(color => {
+        folder.add(new Color(color.name, color.hex, color.star));
+      });
+    });
+
+    console.log(rootFolder.get);
+
     const folderAddBtn = document.getElementById('folderAddBtn');
     folderAddBtn.addEventListener('click', () => {
       flow.emit('folder:add');
@@ -101,7 +79,7 @@
   });
 
   flow.on('changed:folder', (foldername, e) => {
-    const folder = rootFolder.get(foldername);
+    const folder = rootFolder.getFolder(foldername);
     const data = (() => {
       const grouped = _.groupBy(folder.get, color => {
         return color.isLight ? 'light' : 'dark';
@@ -142,6 +120,10 @@
       console.log(rootFolder.folders);
     flow.emit('folder:init');
     }, false);
+  });
+
+  currentWindow.on('close', () => {
+    storage.save(JSON.stringify(rootFolder.get, null, 2));
   });
 
 })();

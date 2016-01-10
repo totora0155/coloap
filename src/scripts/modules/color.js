@@ -4,34 +4,31 @@ const remote = require('remote');
 const app = remote.require('app');
 const fs = require('fs');
 const path = require('path');
+const cheerio = require('cheerio');
 const Kolor = require('color');
 const random = require('./random');
-// const EventEmitter = require('events');
-// const pkg = require('pkg');
-// const storage = require('storage');
-// const cache = require('./cache');
 
 class Color {
   static luminosity() {
     return Kolor('#' + this.hex).luminosity();
   }
 
-  constructor (name, hex) {
+  constructor (name, hex, star) {
     this.name = name;
     this.hex= hex[0] === '#' ? hex.substr(1) : hex;
-    this.star = false;
+    this.star = star || false;
   }
 
-  get inport() {
+  get get() {
     return {
-      // id: this.id,
       name: this.name,
-      color: this.hex,
+      hex: this.hex,
+      star: this.star,
     };
   }
 
   get render() {
-    return `
+    const $ = cheerio.load(`
       <li class="display__item">
         <dl class="color__box">
           <dt role="button" class="color__value">${this.hex}
@@ -44,7 +41,10 @@ class Color {
         </dl>
         <div class="display__name">${this.name}</div>
       </li>
-    `;
+    `);
+    console.log(this);
+    if (this.star) $('.color__star-btn').addClass('color__star-btn--active');
+    return $.html();
   }
 
   get hue() {
