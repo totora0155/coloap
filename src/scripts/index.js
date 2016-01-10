@@ -17,6 +17,29 @@
 
   const currentWindow = remote.getCurrentWindow();
 
+
+    const t1 = new Color('foo', '#bc002d');
+    const t2 = new Color('foo', '#4c9e72');
+    const t3 = new Color('foo', '#4285f4');
+    const t4 = new Color('foo', '#f15723');
+    const t5 = new Color('foo', '#73abd3');
+    const t6 = new Color('foo', '#f5da55');
+
+    const foo = new Folder('foo');
+    const bar = new Folder('bar');
+    const baz = new Folder('baz');
+
+    foo.add(t1);
+    foo.add(t2);
+    foo.add(t3);
+    foo.add(t4);
+    foo.add(t5);
+    foo.add(t6);
+
+    rootFolder.add(foo);
+    rootFolder.add(bar);
+    rootFolder.add(baz);
+
   const ev = {
     changeFolderHandler: (() => {
       const className = 'folder__btn-active';
@@ -31,7 +54,9 @@
     })(),
     clickStarHandler: (() => {
       const className = 'color__star-btn--active';
-      return (self, e) => {
+      return (self, folder, e) => {
+        const target = _.find(folder.get, {name: self.dataset.name});
+        target.star = !target.star;
         self.classList.toggle(className);
       };
     })(),
@@ -41,27 +66,6 @@
     },
   };
 
-  const t1 = new Color('foo', '#bc002d');
-  const t2 = new Color('foo', '#4c9e72');
-  const t3 = new Color('foo', '#4285f4');
-  const t4 = new Color('foo', '#f15723');
-  const t5 = new Color('foo', '#73abd3');
-  const t6 = new Color('foo', '#f5da55');
-
-  const foo = new Folder('foo');
-  const bar = new Folder('bar');
-  const baz = new Folder('baz');
-
-  foo.add(t1);
-  foo.add(t2);
-  foo.add(t3);
-  foo.add(t4);
-  foo.add(t5);
-  foo.add(t6);
-
-  rootFolder.add(foo);
-  rootFolder.add(bar);
-  rootFolder.add(baz);
 
   console.log(storage);
 
@@ -110,7 +114,7 @@
 
     const starBtns = colors.find('.color__star-btn');
     starBtns.forEach(btn => {
-      const handler = ev.clickStarHandler.bind(null, btn);
+      const handler = ev.clickStarHandler.bind(null, btn, folder);
       btn.addEventListener('click', handler, false);
     });
 

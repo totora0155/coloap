@@ -40,7 +40,7 @@ class Color {
             border-radius: ${random.get41to50}% ${random.get41to50}% ${random.get41to50}% ${random.get41to50}% / ${random.get41to50}% ${random.get41to50}% ${random.get41to50}% ${random.get41to50}%;
             transform: rotate(${random.get360}deg);
           "></dd>
-          <span role="button" class="color__star-btn octicon octicon-star"></span>
+          <span role="button" class="color__star-btn octicon octicon-star" data-name="${this.name}"></span>
         </dl>
         <div class="display__name">${this.name}</div>
       </li>
