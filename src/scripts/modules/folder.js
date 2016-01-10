@@ -28,7 +28,7 @@ class Folder {
       </li>
     `);
     if (this.editMode) {
-      $.root().find('.folder__name')
+      $('.folder__name')
         .attr('id', 'folderEditMode')
         .attr('contenteditable', true);
     }
