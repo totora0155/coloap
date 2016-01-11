@@ -33,9 +33,10 @@ class RootFolder {
 
   add (folder) {
     this.folders.push(folder);
+    folder.parent = this;
   }
 
-  remove (folder) {
+  delete (folder) {
     this.folders = _.filter(this.folders, f => f.name !== folder.name);
   }
 }

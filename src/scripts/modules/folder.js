@@ -1,9 +1,11 @@
 'use strict';
 
+const remote = require('remote');
+const Menu = remote.Menu;
 const cheerio = require('cheerio');
+const flow = require('./flow');
 
 var defaultName = 'unknown'
-
 class Folder {
   static get defaultName() { return defaultName; }
   static set defaultName(name) { defaultName = name; }
@@ -13,6 +15,7 @@ class Folder {
     this.data = [];
     this.editMode = editMode || false;
     this.selected = false;
+    this.parent = null;
   }
 
   get get() {
@@ -21,7 +24,7 @@ class Folder {
 
   get render() {
     const $ = cheerio.load(`
-      <li class="folder__item">
+      <li class="folder__item" data-name="${this.name}">
         <a class="folder__btn" role="button" data-name="${this.name}">
           <span class="octicon octicon-file-directory"></span>
           <span class="folder__name">${this.name}</span>
@@ -41,7 +44,28 @@ class Folder {
     return $.html();
   }
 
-  rename(name) {
+  get menuTemplate () {
+    const template = [
+      {
+        label: 'Rename',
+        click: () => {
+          this.editMode = true;
+          flow.emit('folder:init');
+        }
+      },
+      {
+        label: 'Delete',
+        click: () => {
+          this.parent.delete(this);
+          flow.emit('save:data');
+          flow.emit('folder:init');
+        }
+      }
+    ]
+    return template;
+  }
+
+  rename (name) {
     this.name = name;
   }
 

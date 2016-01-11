@@ -33,29 +33,6 @@
         rootFolder.currentFolder = self.dataset.name;
         storage.save({state: rootFolder.getState});
         flow.emit('changed:folder', self.dataset.name);
-
-        console.log(self.parentNode);
-        self.parentNode.addEventListener('contextmenu', ((folder, e) => {
-          e.preventDefault();
-          const template = [
-            {
-              label: 'Folder',
-              submenu: [
-                {
-                  label: 'Delete',
-                  click: () => {
-                    rootFolder.remove(folder);
-                    flow.emit('save:data');
-                    flow.emit('folder:init');
-                  }
-                }
-              ]
-            }
-          ]
-          console.log(123);
-          const menu = Menu.buildFromTemplate(template);
-          menu.popup(currentWindow);
-        }).bind(null, rootFolder.find(self.dataset.name)));
       };
     })(),
     clickStarHandler: (() => {
@@ -103,6 +80,22 @@
 
   flow.on('folder:init', () => {
     folders.render(rootFolder.folders);
+    const elem = document.getElementById('folderEditMode');
+    if (elem) {
+      const folder = rootFolder.find(elem.innerText);
+      flow.emit('folder:focus', folder, elem);
+    }
+
+    const items = folders.find('.folder__item');
+    items.forEach(item => {
+      item.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        const folder = rootFolder.find(item.dataset.name);
+        const menu = Menu.buildFromTemplate(folder.menuTemplate);
+        menu.popup(currentWindow);
+      });
+    })
+
     const btns = folders.find('.folder__btn');
     btns.forEach(btn => {
       const handler = ev.changeFolderHandler.bind(null, btn, btns);
@@ -140,27 +133,28 @@
   });
 
   flow.on('folder:add', () => {
-    const target = new Folder(Folder.defaultName, true);
-    rootFolder.add(target);
+    const folder = new Folder(Folder.defaultName, true);
+    rootFolder.add(folder);
     folders.render(rootFolder.folders);
     const elem = document.getElementById('folderEditMode');
+    if (elem) flow.emit('folder:focus', folder, elem);
+  });
+
+  flow.on('folder:focus', (folder, elem) => {
+    console.log(elem);
     elem.innerText = '';
     elem.focus();
     elem.addEventListener('blur', (e) => {
       elem.innerText = elem.innerText || Folder.defaultName;
       elem.removeAttribute('contenteditable');
       elem.removeAttribute('id');
-      target.rename(elem.innerText);
-      target.editMode = false;
-    storage.save({data: rootFolder.getData});
-    flow.emit('folder:init');
-    }, false);
+      folder.rename(elem.innerText);
+      folder.editMode = false;
+      storage.save({data: rootFolder.getData});
+      flow.emit('folder:init');
+    });
   });
 
-  // currentWindow.on('close', () => {
-  //   flow.removeAllListeners();
-  //   storage.save(rootFolder.getData, rootFolder.getConfig);
-  // });
   flow.emit('init');
 
 })();
