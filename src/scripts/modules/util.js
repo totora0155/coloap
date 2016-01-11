@@ -16,15 +16,32 @@ const util = {
     return new Promise((resolve, reject) => {
       fs.writeFile(filepath, content, enc, (err) => {
         if (err) return reject(err);
-        return resolve();
+        return resolve(true);
       })
     });
   },
-  stat (filepath, cb) {
-    return new Promise((resolve, reject) => {
+  // stat (filepath, cb) {
+  //   return new Promise((resolve, reject) => {
+  //     fs.stat(filepath, (err, stats) => {
+  //       if (err) return reject(err);
+  //       return resolve(cb(stats));
+  //     });
+  //   });
+  // },
+  existsDirectory (filepath) {
+    return new Promise(resolve => {
       fs.stat(filepath, (err, stats) => {
-        if (err) return reject(err);
-        return resolve(cb(stats));
+        console.log(err, stats);
+        if (err) return resolve(false);
+        return resolve(stats.isDirectory());
+      });
+    });
+  },
+  existsFile (filepath) {
+    return new Promise((resolve) => {
+      fs.stat(filepath, (err, stats) => {
+        if (err) return resolve(false);
+        return resolve(stats.isFile());
       });
     });
   },
@@ -32,7 +49,7 @@ const util = {
     return new Promise((resolve, reject) => {
       fs.mkdir(filepath, (err) => {
         if (err) return reject(err);
-        return resolve();
+        return resolve(true);
       })
     });
   },

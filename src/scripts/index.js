@@ -4,18 +4,22 @@
   const EventEmitter = require('events');
   const co = require('co');
   const remote = require('remote');
+  const currentWindow = remote.getCurrentWindow();
+  const Menu = remote.Menu;
+  const MenuItem = remote.MenuItem;
   const clipboard = require('electron').clipboard;
   const _ = require('./src/scripts/modules/custom-lodash');
   const alertify = require('alertify.js');
   const util = require('./src/scripts/modules/util');
   const flow = require('./src/scripts/modules/flow');
   const storage = require('./src/scripts/modules/storage');
+  const template = require('./src/scripts/modules/template');
   const rootFolder = require('./src/scripts/modules/root-folder');
   const Folder = require('./src/scripts/modules/folder');
   const Color = require('./src/scripts/modules/color');
   const Markup = require('./src/scripts/modules/markup');
-
-  const currentWindow = remote.getCurrentWindow();
+  const folders = new Markup('folders', template.folders);
+  const colors = new Markup('colors', template.colors);
 
   const ev = {
     changeFolderHandler: (() => {
@@ -26,7 +30,32 @@
           btn.classList.remove(className);
         });
         self.classList.toggle(className);
+        rootFolder.currentFolder = self.dataset.name;
+        storage.save({state: rootFolder.getState});
         flow.emit('changed:folder', self.dataset.name);
+
+        console.log(self.parentNode);
+        self.parentNode.addEventListener('contextmenu', ((folder, e) => {
+          e.preventDefault();
+          const template = [
+            {
+              label: 'Folder',
+              submenu: [
+                {
+                  label: 'Delete',
+                  click: () => {
+                    rootFolder.remove(folder);
+                    flow.emit('save:data');
+                    flow.emit('folder:init');
+                  }
+                }
+              ]
+            }
+          ]
+          console.log(123);
+          const menu = Menu.buildFromTemplate(template);
+          menu.popup(currentWindow);
+        }).bind(null, rootFolder.find(self.dataset.name)));
       };
     })(),
     clickStarHandler: (() => {
@@ -35,6 +64,7 @@
         const target = _.find(folder.get, {name: self.dataset.name});
         target.star = !target.star;
         self.classList.toggle(className);
+        storage.save({data: rootFolder.getData});
       };
     })(),
     clickHexHandler(self, e) {
@@ -43,30 +73,32 @@
     },
   };
 
-  const template = require('./src/scripts/modules/template');
-  const folders = new Markup('folders', template.folders);
-  const colors = new Markup('colors', template.colors);
-
   alertify.logPosition('right top');
 
-  storage.get.then((data) => {
-    Object.keys(data).forEach(foldername => {
-      const folder = new Folder(foldername);
-      rootFolder.add(folder);
-      data[foldername].forEach(color => {
-        folder.add(new Color(color.name, color.hex, color.star));
+  flow.on('init', () => {
+    storage.get.then(obj => {
+      console.log(obj);
+      Object.keys(obj.data).forEach(foldername => {
+        const folder = new Folder(foldername);
+        if (obj.state.currentFolder === foldername) {
+          folder.selected = true;
+          rootFolder.currentFolder = foldername;
+        }
+        rootFolder.add(folder);
+        obj.data[foldername].forEach(color => {
+          folder.add(new Color(color.name, color.hex, color.star));
+        });
       });
+
+      if (rootFolder.currentFolder)
+        flow.emit('changed:folder', rootFolder.currentFolder);
+
+      const folderAddBtn = document.getElementById('folderAddBtn');
+      folderAddBtn.addEventListener('click', () => {
+        flow.emit('folder:add');
+      }, false);
+      flow.emit('folder:init');
     });
-
-    console.log(rootFolder.get);
-
-    const folderAddBtn = document.getElementById('folderAddBtn');
-    folderAddBtn.addEventListener('click', () => {
-      flow.emit('folder:add');
-    }, false);
-    flow.emit('folder:init');
-  }).catch(err => {
-    console.error(err);
   });
 
   flow.on('folder:init', () => {
@@ -103,6 +135,10 @@
     });
   });
 
+  flow.on('save:data', () => {
+    storage.save({data: rootFolder.getData});
+  });
+
   flow.on('folder:add', () => {
     const target = new Folder(Folder.defaultName, true);
     rootFolder.add(target);
@@ -111,19 +147,20 @@
     elem.innerText = '';
     elem.focus();
     elem.addEventListener('blur', (e) => {
-      console.log(elem);
       elem.innerText = elem.innerText || Folder.defaultName;
       elem.removeAttribute('contenteditable');
       elem.removeAttribute('id');
       target.rename(elem.innerText);
       target.editMode = false;
-      console.log(rootFolder.folders);
+    storage.save({data: rootFolder.getData});
     flow.emit('folder:init');
     }, false);
   });
 
-  currentWindow.on('close', () => {
-    storage.save(JSON.stringify(rootFolder.get, null, 2));
-  });
+  // currentWindow.on('close', () => {
+  //   flow.removeAllListeners();
+  //   storage.save(rootFolder.getData, rootFolder.getConfig);
+  // });
+  flow.emit('init');
 
 })();

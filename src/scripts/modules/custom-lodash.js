@@ -10,6 +10,7 @@ const _ = {
   find: require('lodash.find'),
   merge: require('lodash.merge'),
   groupBy: require('lodash.groupby'),
+  filter: require('lodash.filter'),
 }
 
 _.merge(_.templateSettings.imports._, _);

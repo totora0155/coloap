@@ -42,7 +42,6 @@ class Color {
         <div class="display__name">${this.name}</div>
       </li>
     `);
-    console.log(this);
     if (this.star) $('.color__star-btn').addClass('color__star-btn--active');
     return $.html();
   }

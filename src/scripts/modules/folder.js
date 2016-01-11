@@ -12,6 +12,7 @@ class Folder {
     this.name = name;
     this.data = [];
     this.editMode = editMode || false;
+    this.selected = false;
   }
 
   get get() {
@@ -32,6 +33,11 @@ class Folder {
         .attr('id', 'folderEditMode')
         .attr('contenteditable', true);
     }
+
+    if (this.selected) {
+      $('.folder__btn').addClass('folder__btn-active');
+    }
+
     return $.html();
   }
 
